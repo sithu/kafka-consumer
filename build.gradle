@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+	    maven { url "http://repo.spring.io/release" }
+            mavenCentral()
+	    mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+task initSourceFolders { // add << before { to prevent executing during configuration phase
+   sourceSets*.java.srcDirs*.each { it.mkdirs() }
+   // sourceSets*.scala.srcDirs*.each { it.mkdirs() }
+   sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+}
+
+jar {
+    baseName = 'kafka-consumer'
+    version =  '0.0.1'
+}
+
+bootRepackage {
+    mainClass = 'consumer.Application'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/release" }
+ }
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter")
+    // compile("org.springframework.boot:spring-boot-starter-web")
+    // compile("org.scala-lang:scala-library:2.11.4")
+    // compile("org.webjars:bootstrap:3.1.1")
+    compile("org.apache.kafka:kafka_2.10:0.8.2.1")
+    compile 'javax.mail:mail:1.4.3'
+    compile 'org.springframework:spring-context-support:4.1.5.RELEASE'
+    testCompile("junit:junit")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+configurations {
+    compile.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
